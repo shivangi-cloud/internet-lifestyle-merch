@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Built Online — Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+/* ── Design tokens ──────────────────────────────────────── */
+:root {
+  --ink:       #0D0D0D;
+  --ink-2:     #3A3A3A;
+  --ink-3:     #7A7A7A;
+  --paper:     #F7F5F0;
+  --paper-2:   #EEEAE2;
+  --gold:      #C9A84C;
+  --gold-dim:  rgba(201,168,76,.15);
+  --rule:      rgba(13,13,13,.10);
+  --rule-hard: rgba(13,13,13,.18);
+
+  --display: 'DM Serif Display', Georgia, serif;
+  --body:    'Inter', system-ui, sans-serif;
+  --mono:    'JetBrains Mono', monospace;
+
+  --page-w: 780px;
+  --radius: 6px;
+  --trans: .22s ease;
+}
+
+/* ── Reset ──────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--body);
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Layout shell ───────────────────────────────────────── */
+.exp {
+  max-width: var(--page-w);
+  margin: 0 auto;
+  padding: 0 28px 80px;
+}
+
+/* ── Sections ───────────────────────────────────────────── */
+.section { display: none; opacity: 0; transition: opacity .4s; padding: 3rem 0 2rem; }
+.section.active { display: block; }
+.section.visible { opacity: 1; }
+
+/* ── Top nav ────────────────────────────────────────────── */
+.nav-bar {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--rule-hard);
+  margin-bottom: 3.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.nav-bar::-webkit-scrollbar { display: none; }
+.nav-btn {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding: 10px 14px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color var(--trans), border-color var(--trans);
+}
+.nav-btn:hover { color: var(--ink); }
+.nav-btn.on { color: var(--ink); border-bottom-color: var(--gold); }
+
+/* ── Section eyebrow + title ────────────────────────────── */
+.sec-hed {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+.sec-title {
+  font-family: var(--display);
+  font-size: 38px;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.15;
+  margin-bottom: 1rem;
+}
+.sec-body {
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.75;
+  max-width: 500px;
+  margin-bottom: 2.5rem;
+}
+
+/* ── Hero ───────────────────────────────────────────────── */
+.hero {
+  min-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 5rem 0;
+  position: relative;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 50% at 50% 60%, var(--gold-dim), transparent 70%);
+  pointer-events: none;
+}
+.hero-lines {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  margin-bottom: 4rem;
+}
+.hero-line {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .5s, transform .5s;
+}
+.hero-line em { font-style: italic; color: var(--gold); }
+.hero-line.shown { opacity: 1; transform: none; }
+.hero-q {
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--ink-3);
+  letter-spacing: .04em;
+  margin-bottom: 1.25rem;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .6s .3s, transform .6s .3s;
+}
+.hero-q.shown { opacity: 1; transform: none; }
+.hero-brand {
+  font-family: var(--display);
+  font-size: clamp(52px, 9vw, 80px);
+  font-weight: 400;
+  color: var(--ink);
+  letter-spacing: -.02em;
+  line-height: 1;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .7s .5s, transform .7s .5s;
+}
+.hero-brand.shown { opacity: 1; transform: none; }
+.hero-brand .dot { color: var(--gold); }
+.hero-sub {
+  font-size: 13px;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  opacity: 0;
+  transition: opacity .5s .9s;
+}
+.hero-sub.shown { opacity: 1; }
+.hero-cta {
+  margin-top: 3rem;
+  opacity: 0;
+  transition: opacity .4s 1.2s;
+}
+.hero-cta.shown { opacity: 1; }
+
+/* ── Buttons ────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border-radius: 2px;
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background var(--trans), color var(--trans);
+}
+.btn:hover { background: var(--ink); color: var(--paper); }
+.btn-ghost {
+  border-color: var(--rule-hard);
+  color: var(--ink-2);
+}
+.btn-ghost:hover { background: var(--paper-2); color: var(--ink); }
+.btn-gold {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.btn-gold:hover { background: var(--gold); color: var(--ink); }
+
+/* ── Gap / opportunity row ──────────────────────────────── */
+.gap-row {
+  display: flex;
+  align-items: stretch;
+  gap: 1px;
+  background: var(--rule-hard);
+  margin-bottom: 2.5rem;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.gap-cell {
+  flex: 1;
+  background: var(--paper);
+  padding: 1.5rem 1rem;
+  text-align: center;
+  transition: background var(--trans);
+}
+.gap-cell.empty {
+  background: var(--ink);
+}
+.gap-brand {
+  font-family: var(--display);
+  font-size: 16px;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+.gap-cell.empty .gap-brand { color: var(--gold); }
+.gap-cat {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.gap-cell.empty .gap-cat { color: rgba(255,255,255,.45); }
+.gap-mark {
+  font-size: 22px;
+  margin-bottom: 8px;
+  color: var(--ink-2);
+}
+.gap-cell.empty .gap-mark { color: var(--gold); }
+
+/* ── Stat cards ─────────────────────────────────────────── */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 2.5rem;
+}
+.stat-card {
+  background: var(--paper-2);
+  border-radius: var(--radius);
+  padding: 1.25rem 1rem;
+  border: 1px solid var(--rule);
+}
+.stat-l {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 6px;
+}
+.stat-v {
+  font-family: var(--display);
+  font-size: 26px;
+  color: var(--ink);
+  line-height: 1;
+}
+
+/* ── Audience grid ──────────────────────────────────────── */
+.aud-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 2rem;
+}
+.aud-btn {
+  padding: 16px 14px;
+  border: 1px solid var(--rule-hard);
+  border-radius: var(--radius);
+  cursor: pointer;
+  text-align: left;
+  background: var(--paper);
+  transition: all var(--trans);
+}
+.aud-btn:hover { border-color: var(--ink-2); background: var(--paper-2); }
+.aud-btn.on { border-color: var(--ink); background: var(--paper-2); box-shadow: inset 3px 0 0 var(--gold); }
+.aud-icon { font-size: 16px; margin-bottom: 8px; color: var(--ink-3); }
+.aud-btn.on .aud-icon { color: var(--gold); }
+.aud-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+.aud-tag { font-family: var(--mono); font-size: 9px; color: var(--ink-3); margin-top: 3px; letter-spacing: .05em; }
+
+/* ── Dynamic panel ──────────────────────────────────────── */
+.dyn-panel {
+  border-top: 1px solid var(--rule-hard);
+  padding-top: 1.75rem;
+  margin-top: .5rem;
+}
+.dyn-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-bottom: 1.75rem; }
+.dyn-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--ink-3);
+  margin-bottom: 7px;
+}
+.dyn-val { font-size: 14px; color: var(--ink); line-height: 1.65; }
+.dyn-products { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.dyn-pill {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .06em;
+  padding: 4px 11px;
+  border: 1px solid var(--rule-hard);
+  border-radius: 20px;
+  color: var(--ink-2);
+  text-transform: uppercase;
+}
+.dyn-pill.hi { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+
+/* ── Positioning grid ───────────────────────────────────── */
+.pos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 2rem;
+}
+.pos-btn {
+  padding: 1.25rem;
+  border: 1px solid var(--rule-hard);
+  border-radius: var(--radius);
+  cursor: pointer;
+  background: var(--paper);
+  transition: all var(--trans);
+  text-align: left;
+}
+.pos-btn:hover { border-color: var(--ink-2); background: var(--paper-2); }
+.pos-btn.on { border-color: var(--ink); background: var(--paper-2); box-shadow: inset 3px 0 0 var(--gold); }
+.pos-name { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+.pos-desc { font-family: var(--mono); font-size: 10px; color: var(--ink-3); letter-spacing: .05em; }
+
+/* ── Merch ──────────────────────────────────────────────── */
+.merch-cats { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.75rem; }
+.cat-tab {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border: 1px solid var(--rule-hard);
+  border-radius: 2px;
+  cursor: pointer;
+  color: var(--ink-3);
+  background: transparent;
+  transition: all var(--trans);
+}
+.cat-tab:hover { color: var(--ink); border-color: var(--ink-2); }
+.cat-tab.on { border-color: var(--ink); color: var(--ink); background: var(--paper-2); }
+.merch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+  margin-bottom: 2rem;
+}
+.merch-item {
+  padding: 1.25rem 1rem;
+  border: 1px solid var(--rule-hard);
+  border-radius: var(--radius);
+  cursor: pointer;
+  background: var(--paper);
+  transition: all var(--trans);
+}
+.merch-item:hover { border-color: var(--ink-2); background: var(--paper-2); }
+.merch-item.sel { border-color: var(--gold); background: var(--gold-dim); }
+.m-icon { font-size: 20px; margin-bottom: 10px; color: var(--ink-3); }
+.merch-item.sel .m-icon { color: var(--gold); }
+.m-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+.m-price { font-family: var(--mono); font-size: 10px; color: var(--ink-3); margin-top: 3px; }
+.product-detail {
+  border-top: 1px solid var(--rule-hard);
+  padding-top: 1.75rem;
+  margin-top: 1rem;
+}
+.pd-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+.pd-stat {
+  background: var(--paper-2);
+  border-radius: var(--radius);
+  padding: 1rem;
+  border: 1px solid var(--rule);
+}
+.pd-stat-l { font-family: var(--mono); font-size: 9px; color: var(--ink-3); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .08em; }
+.pd-stat-v { font-family: var(--display); font-size: 22px; color: var(--ink); }
+.pd-note { font-size: 13px; color: var(--ink-2); line-height: 1.65; }
+
+/* ── Apparel ────────────────────────────────────────────── */
+.apparel-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 2rem;
+}
+.app-card {
+  border: 1px solid var(--rule-hard);
+  border-radius: var(--radius);
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--paper);
+  transition: all var(--trans);
+}
+.app-card:hover { border-color: var(--ink-2); }
+.app-card.sel { border-color: var(--gold); }
+.app-front {
+  background: var(--paper-2);
+  padding: 1.75rem;
+  text-align: center;
+  border-bottom: 1px solid var(--rule);
+}
+.app-shirt {
+  width: 62px;
+  height: 62px;
+  border: 1.5px solid var(--ink);
+  border-radius: 3px;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.app-card.sel .app-shirt { border-color: var(--gold); }
+.app-shirt-text {
+  font-family: var(--display);
+  font-size: 9px;
+  font-weight: 400;
+  color: var(--ink);
+  text-align: center;
+  line-height: 1.4;
+  padding: 4px;
+}
+.app-back-text { font-family: var(--mono); font-size: 8px; color: var(--ink-3); text-align: center; line-height: 1.6; margin-top: 4px; }
+.app-meta { padding: .875rem 1rem; }
+.app-concept { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+.app-pos { font-family: var(--mono); font-size: 9px; color: var(--ink-3); letter-spacing: .05em; }
+
+/* ── Flywheel ───────────────────────────────────────────── */
+.fly-steps { display: flex; flex-direction: column; gap: 0; margin-bottom: 2rem; }
+.fly-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--rule);
+  transition: background var(--trans);
+}
+.fly-step:last-child { border-bottom: none; }
+.fly-num {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  color: var(--gold);
+  min-width: 24px;
+  padding-top: 3px;
+}
+.fly-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+.fly-desc { font-size: 12px; color: var(--ink-2); line-height: 1.6; }
+.fly-arrow { font-size: 12px; color: var(--ink-3); margin-left: auto; padding-top: 3px; }
+
+/* ── Revenue ────────────────────────────────────────────── */
+.rev-controls { display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 2rem; }
+.rev-row { display: flex; align-items: center; gap: 14px; }
+.rev-label { font-family: var(--mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); min-width: 120px; }
+.rev-val { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--ink); min-width: 56px; text-align: right; }
+input[type=range] {
+  flex: 1;
+  appearance: none;
+  height: 2px;
+  background: var(--rule-hard);
+  border-radius: 1px;
+  outline: none;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--ink);
+  border: 2px solid var(--paper);
+  box-shadow: 0 0 0 1px var(--ink);
+  cursor: pointer;
+}
+.rev-output { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1.5rem; }
+.rev-stat {
+  background: var(--paper-2);
+  border-radius: var(--radius);
+  padding: 1.25rem 1rem;
+  border: 1px solid var(--rule);
+}
+.rev-stat-l { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-3); margin-bottom: 6px; }
+.rev-stat-v { font-family: var(--display); font-size: 26px; color: var(--ink); }
+#rev-margin-bar {
+  height: 3px;
+  background: var(--rule);
+  border-radius: 2px;
+  margin-bottom: .625rem;
+}
+#rev-margin-fill {
+  height: 100%;
+  background: var(--gold);
+  border-radius: 2px;
+  transition: width .3s ease;
+}
+
+/* ── Pilot grid ─────────────────────────────────────────── */
+.pilot-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 2rem; }
+.pilot-block {
+  padding: 1.5rem;
+  border: 1px solid var(--rule-hard);
+  border-radius: var(--radius);
+  background: var(--paper);
+}
+.pilot-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--gold);
+  margin-bottom: .875rem;
+}
+.pilot-items { display: flex; flex-direction: column; gap: 6px; }
+.pilot-item {
+  font-size: 13px;
+  color: var(--ink);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.4;
+}
+.pilot-item::before {
+  content: "";
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--gold);
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+/* ── Recommendation ─────────────────────────────────────── */
+.reco-box {
+  border: 1px solid var(--rule-hard);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: .875rem;
+  background: var(--paper-2);
+  transition: border-color var(--trans);
+}
+.reco-box:hover { border-color: var(--gold); }
+.reco-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--gold);
+  margin-bottom: 7px;
+}
+.reco-val { font-family: var(--display); font-size: 20px; color: var(--ink); margin-bottom: 5px; }
+.reco-why { font-size: 13px; color: var(--ink-2); line-height: 1.65; }
+.next-steps { display: flex; flex-direction: column; gap: 0; margin-top: 2rem; }
+.ns-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+.ns-item:last-child { border-bottom: none; }
+.ns-n { font-family: var(--mono); font-size: 9px; font-weight: 500; color: var(--gold); min-width: 20px; padding-top: 2px; }
+.ns-text { font-size: 13px; color: var(--ink); line-height: 1.55; }
+
+/* ── Action strip ───────────────────────────────────────── */
+.action-strip {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 2.5rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--rule-hard);
+}
+
+/* ── Divider ────────────────────────────────────────────── */
+hr.rule {
+  border: none;
+  border-top: 1px solid var(--rule);
+  margin: 1.5rem 0;
+}
+
+button { cursor: pointer; }
+</style>
+</head>
+<body>
+
+<div class="exp">
+
+<!-- ── HERO ────────────────────────────────────────────── -->
+<div id="s-hero" class="section active">
+  <div class="hero">
+    <div class="hero-lines" id="heroSeq">
+      <div class="hero-line" id="hl1">Millions work online.</div>
+      <div class="hero-line" id="hl2">Millions create online.</div>
+      <div class="hero-line" id="hl3">Millions earn online.</div>
+      <div class="hero-line" id="hl4">Millions <em>live</em> online.</div>
+    </div>
+    <div class="hero-q" id="heroQ">Who represents them?</div>
+    <div class="hero-brand" id="heroBrand">Built Online<span class="dot">.</span></div>
+    <div class="hero-sub" id="heroSub">A lifestyle brand for the internet generation — by Dabba Network</div>
+    <div class="hero-cta" id="heroCta">
+      <button class="btn" onclick="goTo('s-opp')">Explore the strategy <i class="ti ti-arrow-right"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 01 OPPORTUNITY ──────────────────────────────────── -->
+<div id="s-opp" class="section">
+  <div class="nav-bar">
+    <button class="nav-btn on" onclick="goTo('s-opp')">Opportunity</button>
+    <button class="nav-btn" onclick="goTo('s-aud')">Audience</button>
+    <button class="nav-btn" onclick="goTo('s-pos')">Positioning</button>
+    <button class="nav-btn" onclick="goTo('s-merch')">Merchandise</button>
+    <button class="nav-btn" onclick="goTo('s-app')">Apparel</button>
+    <button class="nav-btn" onclick="goTo('s-fly')">Community</button>
+    <button class="nav-btn" onclick="goTo('s-rev')">Revenue</button>
+    <button class="nav-btn" onclick="goTo('s-pilot')">Pilot</button>
+  </div>
+  <div class="sec-hed">01 — The opportunity</div>
+  <div class="sec-title">Every lifestyle has a brand.<br>Except one.</div>
+  <div class="sec-body">Athletes, adventurers, riders, surfers — every tribe has a brand built around their identity. The internet generation is the largest tribe ever assembled. No brand represents them.</div>
+  <div class="gap-row">
+    <div class="gap-cell"><div class="gap-mark"><i class="ti ti-run"></i></div><div class="gap-brand">Nike</div><div class="gap-cat">Athletes</div></div>
+    <div class="gap-cell"><div class="gap-mark"><i class="ti ti-mountain"></i></div><div class="gap-brand">Patagonia</div><div class="gap-cat">Adventurers</div></div>
+    <div class="gap-cell"><div class="gap-mark"><i class="ti ti-motorbike"></i></div><div class="gap-brand">Harley</div><div class="gap-cat">Riders</div></div>
+    <div class="gap-cell"><div class="gap-mark"><i class="ti ti-waves"></i></div><div class="gap-brand">Quiksilver</div><div class="gap-cat">Surfers</div></div>
+    <div class="gap-cell empty"><div class="gap-mark"><i class="ti ti-wifi"></i></div><div class="gap-brand">?</div><div class="gap-cat">Online Generation</div></div>
+  </div>
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-l">Indian internet users</div><div class="stat-v">800M+</div></div>
+    <div class="stat-card"><div class="stat-l">Work / create online</div><div class="stat-v">300M+</div></div>
+    <div class="stat-card"><div class="stat-l">Lifestyle brand exists</div><div class="stat-v">Zero</div></div>
+  </div>
+  <button class="btn btn-ghost" onclick="goTo('s-aud')">Explore the audience <i class="ti ti-arrow-right"></i></button>
+</div>
+
+<!-- ── 02 AUDIENCE ─────────────────────────────────────── -->
+<div id="s-aud" class="section">
+  <div class="nav-bar">
+    <button class="nav-btn" onclick="goTo('s-opp')">Opportunity</button>
+    <button class="nav-btn on" onclick="goTo('s-aud')">Audience</button>
+    <button class="nav-btn" onclick="goTo('s-pos')">Positioning</button>
+    <button class="nav-btn" onclick="goTo('s-merch')">Merchandise</button>
+    <button class="nav-btn" onclick="goTo('s-app')">Apparel</button>
+    <button class="nav-btn" onclick="goTo('s-fly')">Community</button>
+    <button class="nav-btn" onclick="goTo('s-rev')">Revenue</button>
+    <button class="nav-btn" onclick="goTo('s-pilot')">Pilot</button>
+  </div>
+  <div class="sec-hed">02 — Audience explorer</div>
+  <div class="sec-title">Who is this for?</div>
+  <div class="sec-body">Select an audience. Everything updates — messaging, products, community, revenue opportunity.</div>
+  <div class="aud-grid" id="audGrid"></div>
+  <div class="dyn-panel" id="audPanel"></div>
+  <button class="btn btn-ghost" style="margin-top:1.5rem" onclick="goTo('s-pos')">Explore positioning <i class="ti ti-arrow-right"></i></button>
+</div>
+
+<!-- ── 03 POSITIONING ──────────────────────────────────── -->
+<div id="s-pos" class="section">
+  <div class="nav-bar">
+    <button class="nav-btn" onclick="goTo('s-opp')">Opportunity</button>
+    <button class="nav-btn" onclick="goTo('s-aud')">Audience</button>
+    <button class="nav-btn on" onclick="goTo('s-pos')">Positioning</button>
+    <button class="nav-btn" onclick="goTo('s-merch')">Merchandise</button>
+    <button class="nav-btn" onclick="goTo('s-app')">Apparel</button>
+    <button class="nav-btn" onclick="goTo('s-fly')">Community</button>
+    <button class="nav-btn" onclick="goTo('s-rev')">Revenue</button>
+    <button class="nav-btn" onclick="goTo('s-pilot')">Pilot</button>
+  </div>
+  <div class="sec-hed">03 — Positioning lab</div>
+  <div class="sec-title">Four directions.<br>One decision.</div>
+  <div class="sec-body">Each positioning unlocks a different tone, product ecosystem, and community strategy.</div>
+  <div class="pos-grid" id="posGrid"></div>
+  <div class="dyn-panel" id="posPanel"></div>
+  <button class="btn btn-ghost" style="margin-top:1.5rem" onclick="goTo('s-merch')">Explore merchandise <i class="ti ti-arrow-right"></i></button>
+</div>
+
+<!-- ── 04 MERCHANDISE ──────────────────────────────────── -->
+<div id="s-merch" class="section">
+  <div class="nav-bar">
+    <button class="nav-btn" onclick="goTo('s-opp')">Opportunity</button>
+    <button class="nav-btn" onclick="goTo('s-aud')">Audience</button>
+    <button class="nav-btn" onclick="goTo('s-pos')">Positioning</button>
+    <button class="nav-btn on" onclick="goTo('s-merch')">Merchandise</button>
+    <button class="nav-btn" onclick="goTo('s-app')">Apparel</button>
+    <button class="nav-btn" onclick="goTo('s-fly')">Community</button>
+    <button class="nav-btn" onclick="goTo('s-rev')">Revenue</button>
+    <button class="nav-btn" onclick="goTo('s-pilot')">Pilot</button>
+  </div>
+  <div class="sec-hed">04 — Merchandise ecosystem</div>
+  <div class="sec-title">The complete universe.</div>
+  <div class="sec-body">Click any product to see rationale, production cost, margin, and design direction.</div>
+  <div class="merch-cats" id="merchCats"></div>
+  <div class="merch-grid" id="merchGrid"></div>
+  <div class="product-detail" id="productDetail" style="display:none"></div>
+  <button class="btn btn-ghost" style="margin-top:1rem" onclick="goTo('s-app')">Explore apparel concepts <i class="ti ti-arrow-right"></i></button>
+</div>
+
+<!-- ── 05 APPAREL ──────────────────────────────────────── -->
+<div id="s-app" class="section">
+  <div class="nav-bar">
+    <button class="nav-btn" onclick="goTo('s-opp')">Opportunity</button>
+    <button class="nav-btn" onclick="goTo('s-aud')">Audience</button>
+    <button class="nav-btn" onclick="goTo('s-pos')">Positioning</button>
+    <button class="nav-btn" onclick="goTo('s-merch')">Merchandise</button>
+    <button class="nav-btn on" onclick="goTo('s-app')">Apparel</button>
+    <button class="nav-btn" onclick="goTo('s-fly')">Community</button>
+    <button class="nav-btn" onclick="goTo('s-rev')">Revenue</button>
+    <button class="nav-btn" onclick="goTo('s-pilot')">Pilot</button>
+  </div>
+  <div class="sec-hed">05 — Apparel explorer</div>
+  <div class="sec-title">Wear the identity.</div>
+  <div class="sec-body">Eight apparel concepts across four brand directions. Click to explore each.</div>
+  <div class="apparel-grid" id="appGrid"></div>
+  <button class="btn btn-ghost" style="margin-top:1rem" onclick="goTo('s-fly')">Explore community flywheel <i class="ti ti-arrow-right"></i></button>
+</div>
+
+<!-- ── 06 COMMUNITY ────────────────────────────────────── -->
+<div id="s-fly" class="section">
+  <div class="nav-bar">
+    <button class="nav-btn" onclick="goTo('s-opp')">Opportunity</button>
+    <button class="nav-btn" onclick="goTo('s-aud')">Audience</button>
+    <button class="nav-btn" onclick="goTo('s-pos')">Positioning</button>
+    <button class="nav-btn" onclick="goTo('s-merch')">Merchandise</button>
+    <button class="nav-btn" onclick="goTo('s-app')">Apparel</button>
+    <button class="nav-btn on" onclick="goTo('s-fly')">Community</button>
+    <button class="nav-btn" onclick="goTo('s-rev')">Revenue</button>
+    <button class="nav-btn" onclick="goTo('s-pilot')">Pilot</button>
+  </div>
+  <div class="sec-hed">06 — Community flywheel</div>
+  <div class="sec-title">Products lead to people.<br>People lead to community.</div>
+  <div class="sec-body">Merchandise is the entry point. Community is the destination.</div>
+  <div class="fly-steps" id="flySteps"></div>
+  <button class="btn btn-ghost" style="margin-top:1rem" onclick="goTo('s-rev')">Explore revenue <i class="ti ti-arrow-right"></i></button>
+</div>
+
+<!-- ── 07 REVENUE ─────────────────────────────────────── -->
+<div id="s-rev" class="section">
+  <div class="nav-bar">
+    <button class="nav-btn" onclick="goTo('s-opp')">Opportunity</button>
+    <button class="nav-btn" onclick="goTo('s-aud')">Audience</button>
+    <button class="nav-btn" onclick="goTo('s-pos')">Positioning</button>
+    <button class="nav-btn" onclick="goTo('s-merch')">Merchandise</button>
+    <button class="nav-btn" onclick="goTo('s-app')">Apparel</button>
+    <button class="nav-btn" onclick="goTo('s-fly')">Community</button>
+    <button class="nav-btn on" onclick="goTo('s-rev')">Revenue</button>
+    <button class="nav-btn" onclick="goTo('s-pilot')">Pilot</button>
+  </div>
+  <div class="sec-hed">07 — Revenue explorer</div>
+  <div class="sec-title">The numbers.</div>
+  <div class="sec-body">Adjust volume and pricing. See the margin reality in real time.</div>
+  <div style="margin-bottom:1.5rem">
+    <div class="merch-cats" id="revCats" style="margin-bottom:1.25rem"></div>
+    <div class="rev-controls">
+      <div class="rev-row"><span class="rev-label">Units</span><input type="range" id="r-units" min="50" max="1000" step="50" value="300" oninput="calcRev()"><span class="rev-val" id="o-units">300</span></div>
+      <div class="rev-row"><span class="rev-label">Sell price (₹)</span><input type="range" id="r-price" min="299" max="2999" step="100" value="999" oninput="calcRev()"><span class="rev-val" id="o-price">₹999</span></div>
+      <div class="rev-row"><span class="rev-label">Cost (₹)</span><input type="range" id="r-cost" min="99" max="999" step="50" value="380" oninput="calcRev()"><span class="rev-val" id="o-cost">₹380</span></div>
+    </div>
+  </div>
+  <div class="rev-output">
+    <div class="rev-stat"><div class="rev-stat-l">Gross revenue</div><div class="rev-stat-v" id="o-gross">—</div></div>
+    <div class="rev-stat"><div class="rev-stat-l">Total cost</div><div class="rev-stat-v" id="o-totalcost">—</div></div>
+    <div class="rev-stat"><div class="rev-stat-l">Net profit</div><div class="rev-stat-v" id="o-profit">—</div></div>
+  </div>
+  <div id="rev-margin-bar"><div id="rev-margin-fill"></div></div>
+  <div style="font-family:var(--mono);font-size:10px;color:var(--ink-3);letter-spacing:.06em">MARGIN: <span id="o-margin" style="color:var(--gold)">—</span></div>
+  <button class="btn btn-ghost" style="margin-top:2rem" onclick="goTo('s-pilot')">Explore Bangalore pilot <i class="ti ti-arrow-right"></i></button>
+</div>
+
+<!-- ── 08 PILOT ────────────────────────────────────────── -->
+<div id="s-pilot" class="section">
+  <div class="nav-bar">
+    <button class="nav-btn" onclick="goTo('s-opp')">Opportunity</button>
+    <button class="nav-btn" onclick="goTo('s-aud')">Audience</button>
+    <button class="nav-btn" onclick="goTo('s-pos')">Positioning</button>
+    <button class="nav-btn" onclick="goTo('s-merch')">Merchandise</button>
+    <button class="nav-btn" onclick="goTo('s-app')">Apparel</button>
+    <button class="nav-btn" onclick="goTo('s-fly')">Community</button>
+    <button class="nav-btn" onclick="goTo('s-rev')">Revenue</button>
+    <button class="nav-btn on" onclick="goTo('s-pilot')">Pilot</button>
+  </div>
+  <div class="sec-hed">08 — Bangalore pilot</div>
+  <div class="sec-title">Start here.<br>Scale from here.</div>
+  <div class="sec-body">The pilot is a proof of concept, not a full product launch. Tight scope, fast execution, real signal.</div>
+  <div class="pilot-grid">
+    <div class="pilot-block"><div class="pilot-label">Launch products</div><div class="pilot-items"><div class="pilot-item">Signal Tee (200 units)</div><div class="pilot-item">1ms Cap (150 units)</div><div class="pilot-item">Desk Mat (100 units)</div><div class="pilot-item">Sticky Note Pad "Loading..." (200 units)</div><div class="pilot-item">Socks "Low Ping" (300 units)</div><div class="pilot-item">Sticker Sheet (500 units)</div><div class="pilot-item">LCO Sadri Vest (75 units, gifted)</div></div></div>
+    <div class="pilot-block"><div class="pilot-label">B2B opportunity</div><div class="pilot-items"><div class="pilot-item">Startup welcome kits at 1,200/box x 50 companies</div><div class="pilot-item">Gaming cafe collab bundles</div><div class="pilot-item">Coworking space gifting partnerships</div><div class="pilot-item">Campus ambassador kits</div></div></div>
+    <div class="pilot-block"><div class="pilot-label">Target communities</div><div class="pilot-items"><div class="pilot-item">Indiranagar / Koramangala freelancers</div><div class="pilot-item">HSR Layout startup crowd</div><div class="pilot-item">Gaming cafes — Next Level, E-Zone</div><div class="pilot-item">IIMB / Christ University students</div><div class="pilot-item">Dabba LCO network (75+ partners)</div></div></div>
+    <div class="pilot-block"><div class="pilot-label">Timeline</div><div class="pilot-items"><div class="pilot-item">Week 1–2: Artwork and brief</div><div class="pilot-item">Week 3: Samples from Tirupur</div><div class="pilot-item">Week 4: Waitlist + community seeding</div><div class="pilot-item">Week 5–6: Production run</div><div class="pilot-item">Week 7: Drop day</div></div></div>
+  </div>
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-l">Pilot investment</div><div class="stat-v">~₹3.5L</div></div>
+    <div class="stat-card"><div class="stat-l">Projected revenue</div><div class="stat-v">~₹7–10L</div></div>
+    <div class="stat-card"><div class="stat-l">Net pilot profit</div><div class="stat-v">~₹3–5L</div></div>
+  </div>
+</div>
+
+
+</div><!-- /.exp -->
+
+<script>
+const state = { aud: 'freelancers', pos: 'built-online', mercCat: 'workspace', mercItem: null, revProd: 'tee' };
+
+const audiences = {
+  creators:   { name: 'Creators',             icon: 'ti-palette',          tag: 'YouTube · Instagram · Substack',         msg: 'Made for the ones who make things. Every product is a tool, not a souvenir.',  products: ['Laptop Sleeve','Desk Mat','Ambient Lamp','Sticky Note Pad','Numbered Print','Sticker Sheet'],          community: 'Creator collectives, Discord guilds, YouTube comment sections',                                    revenue: '₹8–14L / drop' },
+  freelancers:{ name: 'Freelancers',           icon: 'ti-briefcase',        tag: 'Agencies · Gig economy · Solopreneurs',  msg: 'Your office is wherever you open the laptop. Your brand should know that.',    products: ['Tech Pouch','Cable Management Box','Slim Wallet','Coaster Set','Notebook','Socks'],    community: 'Freelancer Slack groups, coworking spaces, remote work Reddit communities',                       revenue: '₹6–12L / drop' },
+  startup:    { name: 'Startup professionals', icon: 'ti-rocket',           tag: 'Founders · PMs · Engineers',             msg: 'You build the internet. You should wear it.',                                  products: ['Desk Mat','Monitor Riser','Wrist Rest','Startup Welcome Kit','Cap','Hoodie'],                 community: 'YC India, Antler, startup WhatsApp groups, Twitter/X techie clusters',                           revenue: '₹10–18L / drop' },
+  remote:     { name: 'Remote workers',        icon: 'ti-home',             tag: 'Full-time remote · Digital nomads',      msg: 'Office optional. Identity non-negotiable.',                                    products: ['Tech Pouch','AirTag Sleeve','Socks','Carabiner Clip','Charging Kit','Tee'],               community: 'Remote India communities, nomad Telegram groups, NomadList forums',                               revenue: '₹7–13L / drop' },
+  students:   { name: 'Students',              icon: 'ti-school',           tag: 'IITs · IIMs · Design schools',           msg: 'Connected since day one. The internet is your campus.',                        products: ['Tee','Cap','Sticker Sheet','Index Card Set','Lanyard','Socks'],                          community: 'College fest circuits, campus ambassador programs, hostel Discord servers',                       revenue: '₹4–8L / drop' },
+  gamers:     { name: 'Gamers',               icon: 'ti-device-gamepad-2', tag: 'PC · Console · Mobile · Esports',        msg: 'Low ping. High identity.',                                                     products: ['XL Deskpad','Keyboard Wrist Rest','Controller Holder','LAN Party Kit','Cap','Socks'],                           community: 'LAN cafes, esports tournaments, Discord servers, gaming influencer communities',                  revenue: '₹5–10L / drop' }
+};
+
+const positionings = {
+  'built-online':    { name: 'Built Online',          desc: 'Identity · Heritage · Pride',    tone: 'Confident, minimal, editorial', msg: '"You were built online. Wear it."',        products: 'Desk objects + quality apparel. Collector drops.',      community: 'Member numbers, limited drops, exclusive access',                brand: 'Black and white. Yellow accent. No explanation needed.' },
+  'connected-life':  { name: 'Connected Life',        desc: 'Warmth · Balance · Belonging',  tone: 'Warm, inclusive, lifestyle',    msg: '"Your best connections live here."',       products: 'Everyday carry — bottles, totes, notebooks',            community: 'WhatsApp communities, meetups, IRL events',               brand: 'Warm off-whites. Human photography. Handwritten accents.' },
+  'internet-office': { name: 'Internet is my office', desc: 'Hustle · Remote · Professional',tone: 'Direct, functional, professional',msg: '"Open 24/7. No commute required."',      products: 'Productivity — laptop gear, pouches, travel kits',      community: 'Coworking partnerships, productivity influencers',        brand: 'Clean, structured. Black on white. No decoration.' },
+  'always-online':   { name: 'Always Online',         desc: 'Culture · Gen Z · Internet-native',tone: 'Self-aware, ironic, culturally fluent',msg: '"Last seen: now."',              products: 'Apparel-led — tees, caps, phone accessories',           community: 'Meme culture, Discord, TikTok, gaming',                  brand: 'Dark mode aesthetic. Pixel accents. Internet culture references.' }
+};
+
+const merchandise = {
+  workspace: [
+    {name:'Desk Mat',            icon:'ti-layout',           cost:380, price:999,  note:'The anchor product. Premium rubber base, 220gsm cloth top. Dabba signal embroidered corner.'},
+    {name:'XL Deskpad',          icon:'ti-layout-grid',         cost:520, price:1399, note:'90cm wide full-desk coverage. "Low Latency Surface" woven edge label. Gamers and power users.'},
+    {name:'Mouse Pad',           icon:'ti-rectangle',        cost:180, price:599,  note:'Standard size. Same textile as desk mat. Dabba signal corner print.'},
+    {name:'Monitor Riser',       icon:'ti-device-desktop',   cost:480, price:1299, note:'Steel + bamboo. Elevates monitor 10cm. "Built Online" debossed underneath. Cable pass-through slot.'},
+    {name:'Wrist Rest',          icon:'ti-hand',        cost:220, price:699,  note:'Memory foam, cloth cover matching desk mat textile. Bundle sell with mat.'},
+    {name:'Keyboard Wrist Rest', icon:'ti-keyboard',         cost:200, price:649,  note:'Same foam + textile. "WASD" debossed one end. Gamer-targeted.'},
+    {name:'Ambient Lamp',        icon:'ti-bulb',             cost:380, price:999,  note:'"Always On" USB-C lamp. Minimal matte black arm. Small signal icon on base. Creator favourite.'},
+    {name:'Laptop Sleeve',       icon:'ti-device-laptop',    cost:420, price:1199, note:'14" and 16" sizes. Neoprene with cotton outer. Minimal. One logo, inside lining only.'},
+    {name:'Notebook',            icon:'ti-notebook',         cost:120, price:499,  note:'A6 hardcover. 120 pages. Dot grid. "Built Online" debossed on cover.'},
+    {name:'Sticky Note Pad',     icon:'ti-file-text',        cost:60,  price:249,  note:'50 sheets. Headers printed per sheet: "Loading...", "Buffering...", "404". Functional and memeable.'}
+  ],
+  carry: [
+    {name:'Tech Pouch',          icon:'ti-backpack',         cost:320, price:899,  note:'YKK zipper. Cable management loops inside. "Built Online" heat stamp on strap.'},
+    {name:'Cable Management Box',icon:'ti-box',              cost:340, price:899,  note:'"Untangled" branded lid. Hides a full power strip. Every desk worker needs one.'},
+    {name:'Mesh Cable Pouch',    icon:'ti-package',          cost:80,  price:299,  note:'Small flat grid-mesh. "Carry what keeps you connected." Fits 2 cables and an adapter.'},
+    {name:'Slim Wallet',         icon:'ti-wallet',           cost:180, price:599,  note:'RFID blocking. "Built Online" deboss front. Signal icon on card slot edge.'},
+    {name:'Passport Holder',     icon:'ti-id',               cost:180, price:599,  note:'Vegan leather. RFID blocking. Signal emboss on cover.'},
+    {name:'AirTag Sleeve',       icon:'ti-map-pin',          cost:80,  price:299,  note:'Leather tag with signal emboss. Fits AirTag or similar tracker. Attaches to bags or keys.'},
+    {name:'Carabiner Clip',      icon:'ti-link',             cost:80,  price:299,  note:'Matte black aluminium. Laser etched "1ms". Clips to bags, belt loops, water bottles.'},
+    {name:'Badge Reel',          icon:'ti-badge',            cost:60,  price:199,  note:'Retractable reel for coworking and campus IDs. "Access Granted" printed on face.'},
+    {name:'Charging Kit',        icon:'ti-plug',             cost:280, price:799,  note:'Mesh bag with elastic pockets. Fits cable, adapter, earbuds. Travel-ready.'},
+    {name:'LAN Party Kit',       icon:'ti-device-gamepad',   cost:480, price:1299, note:'Drop-exclusive roll bag. Compartments for mouse, cable, headset. "Packet Loss: 0%".'}
+  ],
+  lifestyle: [
+    {name:'Water Bottle',        icon:'ti-bottle',           cost:280, price:899,  note:'500ml vacuum insulated. Matte black or off-white. Dabba signal on side.'},
+    {name:'Tumbler',             icon:'ti-cup',              cost:320, price:999,  note:'350ml ceramic-coated. "Full Bars" text embossed.'},
+    {name:'Chai Bowl',           icon:'ti-cup',             cost:180, price:599,  note:'"Fuelled by WiFi" print. Ceramic. 400ml. Built for the Bangalore desk-and-chai lifestyle.'},
+    {name:'Coaster Set',         icon:'ti-circle',           cost:120, price:449,  note:'Cork 4-pack. Each coaster = a different HTTP status: 200 OK, 404, 429 Rate Limited, 503.'},
+    {name:'Tote Bag',            icon:'ti-shopping-bag',     cost:180, price:599,  note:'12oz canvas. Screen print: wifi arcs made of dots. Zero logos.'},
+    {name:'Phone Stand',         icon:'ti-device-mobile',    cost:120, price:399,  note:'Weighted aluminium. Adjustable angle. Works for all phones.'},
+    {name:'Controller Holder',   icon:'ti-device-gamepad-2', cost:240, price:699,  note:'Bamboo or steel stand. "Respawn Point" engraved on base. PS + Xbox controllers.'}
+  ],
+  gifting: [
+    {name:'Startup Welcome Kit', icon:'ti-gift',             cost:680, price:1499, note:'Box: notebook, sticker pack, member card, enamel pin. Sold B2B for employee onboarding. Zero CAC.'},
+    {name:'Signal Tin',          icon:'ti-archive',          cost:180, price:599,  note:'Drop 001 exclusive. Mint-tin format. Contains stickers, pin, member card. Collector item.'},
+    {name:'Numbered Print',      icon:'ti-photo',            cost:120, price:499,  note:'A4 risograph print, unique per drop. "Built Online #00421." Flat or rolled.'},
+    {name:'Patch Set',           icon:'ti-scissors',    cost:80,  price:299,  note:'4 iron-on patches: wifi bars, "404", loading spinner, "Ping." DIY streetwear energy.'},
+    {name:'Zine',                icon:'ti-book',             cost:80,  price:249,  note:'Physical printed zine. Stories of people built online. Distributed at events and drops.'},
+    {name:'Woven Label Badge',   icon:'ti-tag',              cost:40,  price:149,  note:'Fabric sew-on badge. Signal icon. Streetwear energy. Free with first drop purchase.'},
+    {name:'Event Lanyard',       icon:'ti-id-badge',       cost:60,  price:0,    note:'Branded for Dabba meetups, gaming nights, creator workshops. Recurring production need.'},
+    {name:'Gift Box (B2B)',      icon:'ti-package',          cost:800, price:1999, note:'Seasonal curated set. Diwali / year-end. Sold to companies for employee gifting at scale.'}
+  ],
+  accessories: [
+    {name:'Sticker Sheet',       icon:'ti-sticker',          cost:50,  price:249,  note:'A5 sheet, 12 stickers for laptop tops. Signal bars, ping counter, "404 not found", status bars.'},
+    {name:'Sticker Pack',        icon:'ti-sticker',          cost:40,  price:199,  note:'6 individual stickers. Loading bar, wifi signal, "404 not found", ping counter.'},
+    {name:'Socks',               icon:'ti-heart',             cost:120, price:399,  note:'"Low Ping" ankle socks. Cheapest entry SKU. Highest gifting rate. Every audience wants them.'},
+    {name:'Enamel Pin',          icon:'ti-pin',              cost:80,  price:299,  note:'Hard enamel. Wifi signal icon. Black and gold. 25mm.'},
+    {name:'Lanyard',             icon:'ti-tag',              cost:60,  price:249,  note:'Woven polyester. "Built Online" on loop.'},
+    {name:'Index Card Set',      icon:'ti-stack-2',            cost:60,  price:199,  note:'"404: Did not Study" on the corner of each card. A5. 50-card pack.'},
+    {name:'Member Card',         icon:'ti-credit-card',      cost:20,  price:0,    note:'Issued with first purchase. Metal-effect. Unique member number printed. Identity object.'}
+  ]
+};
+
+const apparel = [
+  {front:'Built\nOnline',       back:'Work.\nLearn.\nCreate.\nEarn.', concept:'The identity statement',      pos:'Built Online'},
+  {front:'Connected\nSince 2012',back:'#00421',                       concept:'Heritage + member number',    pos:'Built Online'},
+  {front:'Made\nOnline',        back:'',                              concept:'Simple. No explanation.',     pos:'Built Online'},
+  {front:'Internet\nIs My Office',back:'Open 24/7',                   concept:'The professional',            pos:'Internet is my office'},
+  {front:'Remote\nSince\nForever',back:'',                            concept:'No date. No asterisk.',       pos:'Internet is my office'},
+  {front:'Last Seen:\nNow',     back:'',                              concept:'Dark mode energy',            pos:'Always Online'},
+  {front:'Status:\nOnline',     back:'',                              concept:'One status. Always.',         pos:'Always Online'},
+  {front:'Powered\nBy WiFi',    back:'',                              concept:'The dependency, worn proudly',pos:'Connected Life'}
+];
+
+const flywheel = [
+  {n:'01',title:'Product purchase',  desc:'First touchpoint. Customer buys a desk mat or tee. Functional product, premium quality, distinctive design.'},
+  {n:'02',title:'Member number',     desc:'Every purchase issues a unique member number. You are now #00421.'},
+  {n:'03',title:'Early access',      desc:'Member numbers unlock early access to new drops. Lower numbers = higher status.'},
+  {n:'04',title:'Exclusive drops',   desc:'Two to four limited drops per year. Only accessible to existing members 48 hours before public.'},
+  {n:'05',title:'Events',            desc:'Members-only meetups in Bangalore, Mumbai, Delhi. Gaming nights, freelancer dinners, creator workshops.'},
+  {n:'06',title:'Partnerships',      desc:'Brand collaborations unlock only for members. Co-designed products with gaming cafes and tech brands.'},
+  {n:'07',title:'Repeat engagement', desc:'Community compounds. Members recruit members. The brand spreads without ads.'}
+];
+
+const revProducts = {
+  tee:        {label:'T-Shirt',          cost:380,  price:999},
+  hoodie:     {label:'Hoodie',           cost:650,  price:1799},
+  sleeve:     {label:'Laptop Sleeve',    cost:420,  price:1199},
+  mat:        {label:'Desk Mat',         cost:380,  price:999},
+  xlpad:      {label:'XL Deskpad',       cost:520,  price:1399},
+  pouch:      {label:'Tech Pouch',       cost:320,  price:899},
+  bottle:     {label:'Water Bottle',     cost:280,  price:899},
+  riser:      {label:'Monitor Riser',    cost:480,  price:1299},
+  socks:      {label:'Socks',            cost:120,  price:399},
+  coasters:   {label:'Coaster Set',      cost:120,  price:449},
+  stickers:   {label:'Sticker Sheet',    cost:50,   price:249},
+  welcomekit: {label:'Welcome Kit',      cost:680,  price:1499},
+  giftbox:    {label:'Gift Box (B2B)',   cost:800,  price:1999}
+};
+
+/* ── Navigation ─────────────────────────────────────────── */
+function goTo(id) {
+  document.querySelectorAll('.section').forEach(s => { s.classList.remove('active','visible'); });
+  const t = document.getElementById(id);
+  t.classList.add('active');
+  requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('visible')));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ── Audience ───────────────────────────────────────────── */
+function buildAud() {
+  document.getElementById('audGrid').innerHTML = Object.entries(audiences).map(([k,v]) =>
+    `<button class="aud-btn${state.aud===k?' on':''}" onclick="selectAud('${k}')">
+      <div class="aud-icon"><i class="ti ${v.icon}"></i></div>
+      <div class="aud-name">${v.name}</div>
+      <div class="aud-tag">${v.tag}</div>
+    </button>`).join('');
+  updateAudPanel();
+}
+function selectAud(k) { state.aud = k; buildAud(); }
+function updateAudPanel() {
+  const a = audiences[state.aud];
+  document.getElementById('audPanel').innerHTML =
+    `<div class="dyn-row">
+      <div><div class="dyn-label">Messaging</div><div class="dyn-val">${a.msg}</div></div>
+      <div><div class="dyn-label">Revenue opportunity</div><div class="dyn-val">${a.revenue}</div></div>
+    </div>
+    <div class="dyn-row">
+      <div><div class="dyn-label">Top products</div><div class="dyn-products">${a.products.map(p=>`<span class="dyn-pill hi">${p}</span>`).join('')}</div></div>
+      <div><div class="dyn-label">Community channels</div><div class="dyn-val" style="font-size:13px">${a.community}</div></div>
+    </div>`;
+}
+
+/* ── Positioning ────────────────────────────────────────── */
+function buildPos() {
+  document.getElementById('posGrid').innerHTML = Object.entries(positionings).map(([k,v]) =>
+    `<button class="pos-btn${state.pos===k?' on':''}" onclick="selectPos('${k}')">
+      <div class="pos-name">${v.name}</div>
+      <div class="pos-desc">${v.desc}</div>
+    </button>`).join('');
+  updatePosPanel();
+}
+function selectPos(k) { state.pos = k; buildPos(); }
+function updatePosPanel() {
+  const p = positionings[state.pos];
+  document.getElementById('posPanel').innerHTML =
+    `<div class="dyn-row">
+      <div><div class="dyn-label">Tone</div><div class="dyn-val">${p.tone}</div></div>
+      <div><div class="dyn-label">Core message</div><div class="dyn-val">${p.msg}</div></div>
+    </div>
+    <div class="dyn-row">
+      <div><div class="dyn-label">Product focus</div><div class="dyn-val">${p.products}</div></div>
+      <div><div class="dyn-label">Brand feel</div><div class="dyn-val">${p.brand}</div></div>
+    </div>
+    <div><div class="dyn-label">Community</div><div class="dyn-val">${p.community}</div></div>`;
+}
+
+/* ── Merchandise ────────────────────────────────────────── */
+function buildMerch() {
+  const cats = ['workspace','carry','lifestyle','gifting','accessories'];
+  document.getElementById('merchCats').innerHTML = cats.map(c =>
+    `<button class="cat-tab${state.mercCat===c?' on':''}" onclick="selectMercCat('${c}')">${c}</button>`).join('');
+  updateMerchGrid();
+}
+function selectMercCat(c) { state.mercCat = c; state.mercItem = null; document.getElementById('productDetail').style.display = 'none'; buildMerch(); }
+function updateMerchGrid() {
+  document.getElementById('merchGrid').innerHTML = merchandise[state.mercCat].map((m,i) =>
+    `<div class="merch-item${state.mercItem===i?' sel':''}" onclick="selectMercItem(${i})">
+      <div class="m-icon"><i class="ti ${m.icon}"></i></div>
+      <div class="m-name">${m.name}</div>
+      <div class="m-price">${m.price===0?'Gifted':'₹'+m.price}</div>
+    </div>`).join('');
+}
+function selectMercItem(i) {
+  state.mercItem = i; updateMerchGrid();
+  const m = merchandise[state.mercCat][i];
+  const margin = m.price > 0 ? Math.round((m.price-m.cost)/m.price*100) : 0;
+  const pd = document.getElementById('productDetail');
+  pd.style.display = 'block';
+  pd.innerHTML =
+    `<div style="font-family:var(--display);font-size:20px;color:var(--ink);margin-bottom:1rem">${m.name}</div>
+    <div class="pd-row">
+      <div class="pd-stat"><div class="pd-stat-l">Production cost</div><div class="pd-stat-v">${m.price===0?'—':'₹'+m.cost}</div></div>
+      <div class="pd-stat"><div class="pd-stat-l">Sell price</div><div class="pd-stat-v">${m.price===0?'Gifted':'₹'+m.price}</div></div>
+      <div class="pd-stat"><div class="pd-stat-l">Gross margin</div><div class="pd-stat-v">${m.price===0?'—':margin+'%'}</div></div>
+      <div class="pd-stat"><div class="pd-stat-l">Audience fit</div><div class="pd-stat-v">High</div></div>
+    </div>
+    <div class="pd-note">${m.note}</div>`;
+}
+
+/* ── Apparel ────────────────────────────────────────────── */
+function buildApp() {
+  document.getElementById('appGrid').innerHTML = apparel.map((a,i) =>
+    `<div class="app-card" onclick="this.classList.toggle('sel')">
+      <div class="app-front">
+        <div class="app-shirt"><div class="app-shirt-text">${a.front}</div></div>
+        ${a.back ? `<div class="app-back-text">${a.back}</div>` : ''}
+      </div>
+      <div class="app-meta">
+        <div class="app-concept">${a.concept}</div>
+        <div class="app-pos">${a.pos}</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ── Flywheel ───────────────────────────────────────────── */
+function buildFly() {
+  document.getElementById('flySteps').innerHTML = flywheel.map(f =>
+    `<div class="fly-step">
+      <div class="fly-num">${f.n}</div>
+      <div><div class="fly-title">${f.title}</div><div class="fly-desc">${f.desc}</div></div>
+      <div class="fly-arrow"><i class="ti ti-arrow-right"></i></div>
+    </div>`).join('');
+}
+
+/* ── Revenue ────────────────────────────────────────────── */
+function buildRevCats() {
+  document.getElementById('revCats').innerHTML = Object.entries(revProducts).map(function(e) {
+    var k = e[0], v = e[1];
+    var on = state.revProd === k ? ' on' : '';
+    return '<button id="rp-' + k + '" class="cat-tab' + on + '" onclick="selectRevProduct(\'' + k + '\')">' + v.label + '</button>';
+  }).join('');
+}
+function selectRevProduct(k) {
+  state.revProd = k;
+  buildRevCats();
+  const p = revProducts[k];
+  document.getElementById('r-price').value = p.price;
+  document.getElementById('r-cost').value = p.cost;
+  calcRev();
+}
+function calcRev() {
+  const units = parseInt(document.getElementById('r-units').value);
+  const price = parseInt(document.getElementById('r-price').value);
+  const cost  = parseInt(document.getElementById('r-cost').value);
+  document.getElementById('o-units').textContent = units;
+  document.getElementById('o-price').textContent = '₹'+price;
+  document.getElementById('o-cost').textContent  = '₹'+cost;
+  const gross = units*price, totalCost = units*cost, profit = gross-totalCost;
+  const margin = Math.round((profit/gross)*100);
+  const fmt = n => '₹'+(n>=100000?(n/100000).toFixed(1)+'L':n.toLocaleString('en-IN'));
+  document.getElementById('o-gross').textContent     = fmt(gross);
+  document.getElementById('o-totalcost').textContent = fmt(totalCost);
+  document.getElementById('o-profit').textContent    = fmt(profit);
+  document.getElementById('o-margin').textContent    = margin+'%';
+  document.getElementById('rev-margin-fill').style.width = Math.max(0,Math.min(100,margin))+'%';
+}
+
+/* ── Recommendation ─────────────────────────────────────── */
+function buildReco() {
+  const a = audiences[state.aud], p = positionings[state.pos];
+  document.getElementById('recoPanel').innerHTML =
+    `<div class="reco-box"><div class="reco-label">Recommended positioning</div><div class="reco-val">${p.name}</div><div class="reco-why">${p.tone}. ${p.msg}</div></div>
+    <div class="reco-box"><div class="reco-label">Primary audience</div><div class="reco-val">${a.name}</div><div class="reco-why">${a.msg}</div></div>
+    <div class="reco-box"><div class="reco-label">Launch products</div><div class="reco-val">${a.products.slice(0,3).join(', ')}</div><div class="reco-why">Based on your audience selection — highest margin, highest fit.</div></div>
+    <div class="reco-box"><div class="reco-label">Revenue potential (pilot)</div><div class="reco-val">${a.revenue}</div><div class="reco-why">Single drop. Bangalore pilot. 6–8 week execution window.</div></div>`;
+  document.getElementById('nextSteps').innerHTML =
+    ['Commission artwork brief for top 3 products from a Bangalore-based designer',
+     'Source samples from Tirupur manufacturer — 2 week lead time',
+     "Seed waitlist via Dabba's existing hotspot owner community and DBT token holders",
+     'Set up Shopify store — UPI + crypto payment, member number issuance on checkout',
+     'Plan drop day announcement for X and Discord with 48hr early access window',
+     'Gift LCO sadri vests to all 75+ active partners before drop day for ground-level brand presence']
+    .map((s,i) => `<div class="ns-item"><div class="ns-n">0${i+1}</div><div class="ns-text">${s}</div></div>`).join('');
+}
+
+/* ── Hero animation ─────────────────────────────────────── */
+function initHero() {
+  ['hl1','hl2','hl3','hl4'].forEach((id,i) =>
+    setTimeout(() => document.getElementById(id).classList.add('shown'), 300+i*400));
+  setTimeout(() => document.getElementById('heroQ').classList.add('shown'), 2200);
+  setTimeout(() => document.getElementById('heroBrand').classList.add('shown'), 2800);
+  setTimeout(() => document.getElementById('heroSub').classList.add('shown'), 3100);
+  setTimeout(() => document.getElementById('heroCta').classList.add('shown'), 3400);
+}
+
+/* ── Hero section fade-in on load ───────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('s-hero').classList.add('visible');
+});
+
+buildAud(); buildPos(); buildMerch(); buildApp(); buildFly(); buildRevCats(); calcRev(); initHero();
+</script>
+</body>
+</html>
